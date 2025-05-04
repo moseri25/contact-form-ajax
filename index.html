@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>טופס יצירת קשר</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f8f8f8;
+      padding: 20px;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 20px;
+      background: #0a84ff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .success, .error {
+      display: none;
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .success {
+      background: #dff0d8;
+      color: #3c763d;
+    }
+    .error {
+      background: #f2dede;
+      color: #a94442;
+    }
+  </style>
+</head>
+<body>
+  <form id="contactForm">
+    <h2>טופס יצירת קשר</h2>
+    <label for="name">שם מלא</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="email">אימייל</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="phone">טלפון</label>
+    <input type="text" id="phone" name="phone" required>
+
+    <label for="message">הודעה</label>
+    <textarea id="message" name="message" rows="4" required></textarea>
+
+    <button type="submit">שלח</button>
+
+    <div class="success" id="successMessage">ההודעה נשלחה בהצלחה!</div>
+    <div class="error" id="errorMessage">אירעה שגיאה בשליחה. נסה שוב.</div>
+  </form>
+
+  <script>
+    const form = document.getElementById('contactForm');
+    const success = document.getElementById('successMessage');
+    const error = document.getElementById('errorMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = new URLSearchParams(formData);
+
+      try {
+        const res = await fetch("https://cart-abandonment2.onrender.com/webhook/contact-form-ajax", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: data
+        });
+
+        if (res.ok) {
+          success.style.display = "block";
+          error.style.display = "none";
+          form.reset();
+        } else {
+          throw new Error();
+        }
+      } catch (err) {
+        error.style.display = "block";
+        success.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
